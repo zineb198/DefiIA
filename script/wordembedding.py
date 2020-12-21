@@ -8,10 +8,12 @@ import os
 
 class WordEmbedding:
 
-    def __init__(self, word_embedding_type, args, DATA_MODELS_PATH):
+    def __init__(self, word_embedding_type, args, DATA_MODELS_PATH, array_token, test_array_token):
         self.word_embedding_type = word_embedding_type
         self.args = args
         self.data_models_path = os.path.join(DATA_MODELS_PATH, self.word_embedding_type)
+        self.array_token = array_token
+        self.test_array_token = test_array_token
 
     def train(self):
         print('### Training model ###')
@@ -62,12 +64,14 @@ class WordEmbedding:
         num_hash = self.get_str()
         model.wv.save(os.path.join(self.data_models_path,num_hash))
 
-    def features_save(self, X_train):
+    def features_save(self, X, file):
         num_hash = self.get_str()
-        pickle.dump(X_train, open(os.path.join(self.data_models_path, num_hash)+'.pkl', 'wb'))
+        pickle.dump(X, open(os.path.join(self.data_models_path, file+'_'+num_hash+'.pkl'), 'wb'))
 
     def train_save(self):
         model, time = self.train()
         self.model_save(model, time)
-        X_train, time = self.get_matrix_features_means(self.args['sentences'], model)
-        self.features_save(X_train)
+        X_train, time = self.get_matrix_features_means(self.array_token, model)
+        self.features_save(X_train, 'train')
+        X_test, time = self.get_matrix_features_means(self.array_token, model)
+        self.features_save(X_test, 'test')

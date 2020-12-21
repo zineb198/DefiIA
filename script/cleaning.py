@@ -23,8 +23,6 @@ test_df.set_index('Id', inplace=True)
 train_label = pd.read_csv(DATA_PATH+"/train_label.csv")
 train_label.set_index('Id', inplace=True)
 
-categ = pd.read_csv(DATA_PATH+'/categories_string.csv')
-
 train_df.drop(nanlist, axis=0, inplace=True)
 train_label.drop(nanlist, axis=0, inplace=True)
 
@@ -34,9 +32,9 @@ ct = CleanText(lem=True, stemming=False)
 try:
     ct.clean_save(train_df, 'train', "description", "description_cleaned", DATA_CLEANED_PATH)
     ct.clean_save(test_df, 'test', "description", "description_cleaned", DATA_CLEANED_PATH)
-    train_label['Category'].to_csv(os.path.join(DATA_CLEANED_PATH,'train_label.csv'), index=True)
+    train_label['Category'].to_csv(os.path.join(DATA_CLEANED_PATH, 'cleaned_train_label.csv'), index=True)
 except:
     nltk.download('wordnet')
     ct.clean_save(train_df, "description", "description_cleaned", DATA_CLEANED_PATH)
     ct.clean_save(test_df, "description", "description_cleaned", DATA_CLEANED_PATH)
-    train_label['Category'].to_csv(os.path.join(DATA_CLEANED_PATH,'train_label.csv'), index=True)
+    train_label['Category'].to_csv(os.path.join(DATA_CLEANED_PATH, 'cleaned_train_label.csv'), index=True)
