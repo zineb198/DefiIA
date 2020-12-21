@@ -3,6 +3,7 @@ import gensim
 import numpy as np
 import hashlib
 import pickle
+import os
 
 
 class WordEmbedding:
@@ -10,7 +11,7 @@ class WordEmbedding:
     def __init__(self, word_embedding_type, args, DATA_MODELS_PATH):
         self.word_embedding_type = word_embedding_type
         self.args = args
-        self.data_models_path = DATA_MODELS_PATH + self.word_embedding_type + '/'
+        self.data_models_path = os.path.join(DATA_MODELS_PATH, self.word_embedding_type)
 
     def train(self):
         print('### Training model ###')
@@ -25,7 +26,7 @@ class WordEmbedding:
     @staticmethod
     def get_features_mean(lines, model):
         features = [model[x] for x in lines if x in model]
-        if features == []:
+        if features==[]:
             fm = np.zeros(model.vector_size)
         else:
             fm = np.mean(features, axis=0)
@@ -59,11 +60,11 @@ class WordEmbedding:
     def model_save(self, model, time):
         print("Model ", self.word_embedding_type, " trained in %.2f minutes" % (time / 60), "\n\n")
         num_hash = self.get_str()
-        model.wv.save(self.data_models_path + num_hash)
+        model.wv.save(os.path.join(self.data_models_path,num_hash))
 
     def features_save(self, X_train):
         num_hash = self.get_str()
-        pickle.dump(X_train, open(self.data_models_path + num_hash + '.pkl', 'wb'))
+        pickle.dump(X_train, open(os.path.join(self.data_models_path, num_hash)+'.pkl', 'wb'))
 
     def train_save(self):
         model, time = self.train()

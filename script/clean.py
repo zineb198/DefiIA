@@ -1,8 +1,8 @@
 import re
 import unicodedata
 import nltk
-import numpy as np
 from tqdm import tqdm
+import os
 
 
 class CleanText:
@@ -18,7 +18,6 @@ class CleanText:
         # Args
         self.stemming = stemming
         self.lem = lem
-
 
     @staticmethod
     def convert_text_to_lower_case(txt):
@@ -51,7 +50,8 @@ class CleanText:
         '''
         return [w for w in txt.split() if (w not in self.stopwords)]
 
-    def get_stem(self, tokens):
+    @staticmethod
+    def get_stem(tokens):
         '''
         :param tokens: (list of str)
         :return: (list of str) with stemmed tokens
@@ -59,7 +59,8 @@ class CleanText:
         stemmer = nltk.stem.SnowballStemmer('english')
         return [stemmer.stem(token) for token in tokens]
 
-    def get_lem(self, tokens):
+    @staticmethod
+    def get_lem(tokens):
         lemmatizer = nltk.stem.WordNetLemmatizer()
         return [lemmatizer.lemmatize(token) for token in tokens]
 
@@ -79,7 +80,6 @@ class CleanText:
             tokens = self.get_lem(tokens)
         return tokens
 
-
     def clean_df_column(self, df, column_name, clean_column_name):
         '''
         clean all the text lines of the df columns and add a new columns on this df that contains the cleaned line
@@ -89,3 +89,15 @@ class CleanText:
         :return: df with cleaned column
         '''
         df[clean_column_name] = [" ".join(self.apply_all_transformation(x)) for x in tqdm(df[column_name].values)]
+
+    def get_str(self):
+        str_params = '_cleaned'
+        if self.stemming:
+            str_params += '_stem'
+        elif self.lem:
+            str_params += '_lem'
+        return str_params
+
+    def clean_save(self, df, df_str, column_name, clean_column_name, DATA_CLEANED_PATH):
+        self.clean_df_column(df, column_name, clean_column_name)
+        df.to_csv(os.path.join(DATA_CLEANED_PATH, df_str + self.get_str() + '.csv'), index=True)
