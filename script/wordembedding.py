@@ -16,11 +16,10 @@ class WordEmbedding:
         self.test_array_token = test_array_token
 
     def train(self):
-        print('### Training model ###')
         ts = time.time()
         if self.word_embedding_type == "word2vec":
             model = gensim.models.Word2Vec(**self.args)
-        if self.word_embedding_type == "fasttext":  # Pas encore teste
+        if self.word_embedding_type == "fasttext":  # Pas encore test
             model = gensim.models.FastText(**self.args)
         te = time.time()
         return model, te - ts
@@ -36,7 +35,6 @@ class WordEmbedding:
 
     @staticmethod
     def get_matrix_features_means(X, model):
-        print('### Get features ###')
         ts = time.time()
         X_embedded_ = list(map(lambda x: WordEmbedding.get_features_mean(x, model), X))
         X_embedded = np.vstack(X_embedded_)
@@ -60,18 +58,22 @@ class WordEmbedding:
         return str_params
 
     def model_save(self, model, time):
-        print("Model ", self.word_embedding_type, " trained in %.2f minutes" % (time / 60), "\n\n")
+        print("Model ", self.word_embedding_type, " trained in %.2f minutes" % (time / 60), "\n")
         num_hash = self.get_str()
-        model.wv.save(os.path.join(self.data_models_path,num_hash))
+        model.wv.save(os.path.join(self.data_models_path, num_hash))
 
     def features_save(self, X, file):
         num_hash = self.get_str()
         pickle.dump(X, open(os.path.join(self.data_models_path, file+'_'+num_hash+'.pkl'), 'wb'))
 
     def train_save(self):
+        print('### Training model ###')
+        print(self.get_str())
         model, time = self.train()
         self.model_save(model, time)
+
+        print('\n \n### Get features ###')
         X_train, time = self.get_matrix_features_means(self.array_token, model)
-        self.features_save(X_train, 'train')
-        X_test, time = self.get_matrix_features_means(self.array_token, model)
-        self.features_save(X_test, 'test')
+        self.features_save(X_train, 'X_train')
+        X_test, time = self.get_matrix_features_means(self.test_array_token, model)
+        self.features_save(X_test, 'X_test')

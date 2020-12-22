@@ -100,4 +100,4 @@ class CleanText:
 
     def clean_save(self, df, df_str, column_name, clean_column_name, DATA_CLEANED_PATH):
         self.clean_df_column(df, column_name, clean_column_name)
-        df.to_csv(os.path.join(DATA_CLEANED_PATH, df_str + self.get_str() + '.csv'), index=True)
+        df.to_csv(os.path.join(DATA_CLEANED_PATH, df_str + self.get_str() + '.csv'), index=True, encoding='utf-8')
