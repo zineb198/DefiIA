@@ -25,8 +25,13 @@ if not os.path.exists(DATA_MODELS_PATH):
 params_cl = '_stem'  # TODO : '_stem' if stemming=True or '_lem' if lemmatizer in cleaning
 
 train_df = pd.read_csv(os.path.join(DATA_CLEANED_PATH, 'train_cleaned' + params_cl + '.csv'), index_col=0)
+train_df.set_index('Id', inplace=True)
 test_df = pd.read_csv(os.path.join(DATA_CLEANED_PATH, 'test_cleaned' + params_cl + '.csv'), index_col=0)
+test_df.set_index('Id', inplace=True)
+
 train_label = pd.read_csv(os.path.join(DATA_PATH, 'train_label.csv'), index_col=0)
+train_label.set_index('Id', inplace=True)
+
 
 array_token = [line.split(" ") for line in train_df["description_cleaned"].values]
 test_array_token = [line.split(" ") for line in test_df["description_cleaned"].values]
