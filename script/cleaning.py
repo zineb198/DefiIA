@@ -5,7 +5,7 @@ import nltk
 
 
 # Define PATH files
-DATA_PATH = '/Users/cecile/Documents/INSA/DefiIA/data/'    #TODO
+DATA_PATH = '/Users/Morgane/Desktop/5GMM/DefiIA/data'#'/Users/cecile/Documents/INSA/DefiIA/data/'    #TODO
 #DATA_PATH = '/home/cecile/data'  # PATH si utilisation de l'instance (attention il faut commenter les os.makedirs...)
 DATA_CLEANED_PATH = os.path.join(DATA_PATH, 'cleaned')
 if not os.path.exists(DATA_CLEANED_PATH):

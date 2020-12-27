@@ -17,112 +17,134 @@ class classif_method:
     '''
 
     def __init__(self, X_train, X_test_submit, Y_train, test_df, DATA_RESULTS_PATH, params_we_str):
-        self.X_train = X_train
+        self.X_train_init=X_train
         self.X_test_submit = X_test_submit
-        self.Y_train = Y_train
+        self.Y_train_init = Y_train
         self.test_df = test_df
         self.data_results_path = DATA_RESULTS_PATH
         self.params_we = params_we_str
         self.score_track = pd.DataFrame(columns=['name', 'f1score', 'accuracy', 'time'])
 
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X_train, self.Y_train, test_size=0.33,
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X_train_init,
+                                                                                self.Y_train_init,test_size=0.33,
                                                                                 random_state=2020)
 
     def logit(self, save):
-        lr = LogisticRegression(max_iter=1000)
-        ts = time.time()
-        lr.fit(self.X_train, self.y_train)
-        te = time.time()
-        pred = lr.predict(self.X_test)
-        self.score_track = self.score_track.append({'name': 'Logistic Regression',
-                                                    'f1score': round(f1_score(self.y_test, pred, average='macro'), 2),
-                                                    'accuracy': round(accuracy_score(self.y_test, pred), 2),
-                                                    'time': round(te - ts)}, ignore_index=True)
-        if save:
+        if save==False :
+            lr = LogisticRegression(max_iter=1000)
+            ts = time.time()
+            lr.fit(self.X_train, self.y_train)
+            te = time.time()
+            pred = lr.predict(self.X_test)
+            self.score_track = self.score_track.append({'name': 'Logistic Regression',
+                                                        'f1score': round(f1_score(self.y_test, pred, average='macro'), 2),
+                                                        'accuracy': round(accuracy_score(self.y_test, pred), 2),
+                                                        'time': round(te - ts)}, ignore_index=True)
+        else:
+            lr = LogisticRegression(max_iter=1000)
+            lr.fit(self.X_train_init, self.Y_train_init)
             pred_submit = lr.predict(self.X_test_submit)
             self.to_submit_file('logit', pred_submit)
 
     def logit_lasso(self, save):
-        logit_lasso = LogisticRegression(penalty='l1', solver='liblinear')
-        ts = time.time()
-        logit_lasso.fit(self.X_train, self.y_train)
-        te = time.time()
-        pred = logit_lasso.predict(self.X_test)
-        self.score_track = self.score_track.append({'name': 'Lasso Logistic Regression',
-                                                    'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
-                                                    'accuracy': round(accuracy_score(self.y_test, pred), 3),
-                                                    'time': round(te - ts)}, ignore_index=True)
-        if save:
+        if save==False :
+            logit_lasso = LogisticRegression(penalty='l1', solver='liblinear')
+            ts = time.time()
+            logit_lasso.fit(self.X_train, self.y_train)
+            te = time.time()
+            pred = logit_lasso.predict(self.X_test)
+            self.score_track = self.score_track.append({'name': 'Lasso Logistic Regression',
+                                                        'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
+                                                        'accuracy': round(accuracy_score(self.y_test, pred), 3),
+                                                        'time': round(te - ts)}, ignore_index=True)
+        else :
+            logit_lasso = LogisticRegression(penalty='l1', solver='liblinear')
+            logit_lasso.fit(self.X_train_init, self.Y_train_init)
             pred_submit = logit_lasso.predict(self.X_test_submit)
             self.to_submit_file('logit_lasso', pred_submit)
 
     def logit_ridge(self, save):
-        logit_ridge = LogisticRegression(penalty='l2', solver='liblinear')
-        ts = time.time()
-        logit_ridge.fit(self.X_train, self.y_train)
-        te = time.time()
-        pred = logit_ridge.predict(self.X_test)
-        self.score_track = self.score_track.append({'name': 'Ridge Logistic Regression',
-                                                    'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
-                                                    'accuracy': round(accuracy_score(self.y_test, pred), 3),
-                                                    'time': round(te - ts)}, ignore_index=True)
-        if save:
+        if save==False :
+            logit_ridge = LogisticRegression(penalty='l2', solver='liblinear')
+            ts = time.time()
+            logit_ridge.fit(self.X_train, self.y_train)
+            te = time.time()
+            pred = logit_ridge.predict(self.X_test)
+            self.score_track = self.score_track.append({'name': 'Ridge Logistic Regression',
+                                                        'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
+                                                        'accuracy': round(accuracy_score(self.y_test, pred), 3),
+                                                        'time': round(te - ts)}, ignore_index=True)
+        else:
+            logit_ridge = LogisticRegression(penalty='l2', solver='liblinear')
+            logit_ridge.fit(self.X_train_init, self.Y_train_init)
             pred_submit = logit_ridge.predict(self.X_test_submit)
             self.to_submit_file('logit_ridge', pred_submit)
 
     def tree(self, save):
-        tree = DecisionTreeClassifier()
-        ts = time.time()
-        tree.fit(self.X_train, self.y_train)
-        te = time.time()
-        pred = tree.predict(self.X_test)
-        self.score_track = self.score_track.append({'name': 'Regression Tree',
-                                                    'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
-                                                    'accuracy': round(accuracy_score(self.y_test, pred), 3),
-                                                    'time': round(te - ts)}, ignore_index=True)
-        if save:
+        if save==False:
+            tree = DecisionTreeClassifier()
+            ts = time.time()
+            tree.fit(self.X_train, self.y_train)
+            te = time.time()
+            pred = tree.predict(self.X_test)
+            self.score_track = self.score_track.append({'name': 'Regression Tree',
+                                                        'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
+                                                        'accuracy': round(accuracy_score(self.y_test, pred), 3),
+                                                        'time': round(te - ts)}, ignore_index=True)
+        else:
+            tree = DecisionTreeClassifier()
+            tree.fit(self.X_train_init, self.Y_train_init)
             pred_submit = tree.predict(self.X_test_submit)
             self.to_submit_file('tree', pred_submit)
 
     def forest(self, save):
-        forest = RandomForestClassifier()
-        ts = time.time()
-        forest.fit(self.X_train, self.y_train)
-        te = time.time()
-        pred = forest.predict(self.X_test)
-        self.score_track = self.score_track.append({'name': 'Random Forest',
-                                                    'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
-                                                    'accuracy': round(accuracy_score(self.y_test, pred), 3),
-                                                    'time': round(te - ts)}, ignore_index=True)
-        if save:
+        if save==False:
+            forest = RandomForestClassifier()
+            ts = time.time()
+            forest.fit(self.X_train, self.y_train)
+            te = time.time()
+            pred = forest.predict(self.X_test)
+            self.score_track = self.score_track.append({'name': 'Random Forest',
+                                                        'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
+                                                        'accuracy': round(accuracy_score(self.y_test, pred), 3),
+                                                        'time': round(te - ts)}, ignore_index=True)
+        else:
+            forest = RandomForestClassifier()
+            forest.fit(self.X_train_init, self.Y_train_init)
             pred_submit = forest.predict(self.X_test_submit)
             self.to_submit_file('forest', pred_submit)
 
     def Gradientboosting(self, save):
-        gbm = GradientBoostingClassifier()
-        ts = time.time()
-        gbm.fit(self.X_train, self.y_train)
-        te = time.time()
-        pred = gbm.predict(self.X_test)
-        self.score_track = self.score_track.append({'name': 'Gradient Boosting',
-                                                    'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
-                                                    'accuracy': round(accuracy_score(self.y_test, pred), 3),
-                                                    'time': round(te - ts)}, ignore_index=True)
-        if save:
+        if save==False:
+            gbm = GradientBoostingClassifier()
+            ts = time.time()
+            gbm.fit(self.X_train, self.y_train)
+            te = time.time()
+            pred = gbm.predict(self.X_test)
+            self.score_track = self.score_track.append({'name': 'Gradient Boosting',
+                                                        'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
+                                                        'accuracy': round(accuracy_score(self.y_test, pred), 3),
+                                                        'time': round(te - ts)}, ignore_index=True)
+        else:
+            gbm = GradientBoostingClassifier()
+            gbm.fit(self.X_train_init, self.Y_train_init)
             pred_submit = gbm.predict(self.X_test_submit)
             self.to_submit_file('gbm', pred_submit)
 
     def SVM(self, save):
-        svm = SVC()
-        ts = time.time()
-        svm.fit(self.X_train, self.y_train)
-        te = time.time()
-        pred = svm.predict(self.X_test)
-        self.score_track = self.score_track.append({'name': 'Support Vector Machine',
-                                                    'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
-                                                    'accuracy': round(accuracy_score(self.y_test, pred), 3),
-                                                    'time': round(te - ts)}, ignore_index=True)
-        if save:
+        if save==False:
+            svm = SVC()
+            ts = time.time()
+            svm.fit(self.X_train, self.y_train)
+            te = time.time()
+            pred = svm.predict(self.X_test)
+            self.score_track = self.score_track.append({'name': 'Support Vector Machine',
+                                                        'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
+                                                        'accuracy': round(accuracy_score(self.y_test, pred), 3),
+                                                        'time': round(te - ts)}, ignore_index=True)
+        else:
+            svm=SVC()
+            svm.fit(self.X_train_init, self.Y_train_init)
             pred_submit = svm.predict(self.X_test_submit)
             self.to_submit_file('svm', pred_submit)
 
