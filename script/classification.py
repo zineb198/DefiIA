@@ -10,12 +10,24 @@ from wordembedding import WordEmbedding
 DATA_PATH = '/home/cecile/data/'  # PATH si utilisation de l'instance (attention il faut commenter les os.makedirs...)
 DATA_MODELS_PATH = '/home/cecile/models/'  # PATH si utilisation de l'instance (attention il faut commenter les os.makedirs...)
 DATA_RESULTS_PATH = '/home/cecile/results/'  # PATH si utilisation de l'instance (attention il faut commenter les os.makedirs...)
+DATA_CLEANED_PATH=os.path.join(DATA_PATH, 'cleaned')
+
+
+#if not os.path.exists(DATA_MODELS_PATH): # Si utilisation de l'instance, il faut commenter les os.makedirs...
+#    os.makedirs(DATA_MODELS_PATH)
+#    os.makedirs(os.path.join(DATA_MODELS_PATH, 'word2vec'))
+#    os.makedirs(os.path.join(DATA_MODELS_PATH, 'fasttext'))
+    
 #if not os.path.exists(DATA_RESULTS_PATH):
 #    os.makedirs(DATA_RESULTS_PATH)
 
-test_df = pd.read_json(DATA_PATH+"/test.json")
-test_df.set_index('Id', inplace=True)
-test_df['description'] = [line.replace('\r', '') for line in test_df["description"].values]
+# Reading files
+params_cl = '_stem'  # TODO : '_stem' if stemming=True or '_lem' if lemmatizer in cleaning
+
+train_df = pd.read_csv(os.path.join(DATA_CLEANED_PATH, 'train_cleaned' + params_cl + '.csv'), index_col=0)
+test_df = pd.read_csv(os.path.join(DATA_CLEANED_PATH, 'test_cleaned' + params_cl + '.csv'), index_col=0)
+
+arg_gender=False # TODO
 
 # Reading files for each word embedding combination of parameters
 for sg in [0, 1]:
@@ -33,8 +45,8 @@ for sg in [0, 1]:
         X_test_submit = pickle.load(open(os.path.join(DATA_MODELS_PATH, type_we, 'X_test_' + name_we + '.pkl'), "rb"))
         Y_train = pd.read_csv(DATA_PATH + 'train_label.csv', index_col=0)
         Y_train = Y_train['Category']
-
+        
 # Apply classification method
-        cf = classif_method(X_train, X_test_submit, Y_train, test_df, DATA_RESULTS_PATH, name_we)
+        cf = classif_method(X_train, X_test_submit, Y_train, train_df, test_df, DATA_RESULTS_PATH, name_we,arg_gender)
         cf.method_save(save=True)
 
