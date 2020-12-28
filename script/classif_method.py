@@ -19,7 +19,9 @@ import os
 class classif_method:
     '''
     This class applies different classification methods to X and Y data and adds metrics to a dataframe score_track
-    Param gender = Boolean, if True add columns genders to predict
+    
+    train_df and test_df are dataframe with columns : Id, Category and gender
+    gender = Boolean, if True add columns genders to predict
     '''
 
     def __init__(self, X_train, X_test_submit, Y_train, train_df, test_df, DATA_RESULTS_PATH, params_we_str,gender):
@@ -144,49 +146,61 @@ class classif_method:
             param_dist ={"max_features":{"sqrt","log2"},"n_estimators":list(range(100,500,1000)),
                          "max_depth":list(range(4,10))+[None]}
             random_search_rf = RandomizedSearchCV(forest,param_distributions=param_dist,
-                                                  n_iter=14,scoring="f1_macro")
+                                                  n_iter=10,scoring="f1_macro")
             random_search_rf.fit(self.X_train_init, self.Y_train_init)
             pred_submit = random_search_rf.predict(self.X_test_submit)
             self.to_submit_file('forest', pred_submit)
 
     def Gradientboosting(self, save):
         if save==False:
+            param_dist = {'n_estimators': list(range(100,601,100)), 'learning_rate': [0.05,0.1,0.25,0.5,0.75,1]}
             gbm = GradientBoostingClassifier()
+            random_search_gbm = RandomizedSearchCV(gbm,param_distributions=param_dist,n_iter=10,scoring="f1_macro")
             ts = time.time()
-            gbm.fit(self.X_train, self.y_train)
+            random_search_gbm.fit(self.X_train, self.y_train)
             te = time.time()
-            pred = gbm.predict(self.X_test)
+            pred = random_search_gbm.predict(self.X_test)
             self.score_track = self.score_track.append({'name': 'Gradient Boosting',
                                                         'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
                                                         'accuracy': round(accuracy_score(self.y_test, pred), 3),
                                                         'time': round(te - ts)}, ignore_index=True)
         else:
+            param_dist = {'n_estimators': list(range(100,601,100)), 'learning_rate': [0.05,0.1,0.25,0.5,0.75,1]}
             gbm = GradientBoostingClassifier()
-            gbm.fit(self.X_train_init, self.Y_train_init)
-            pred_submit = gbm.predict(self.X_test_submit)
+            random_search_gbm = RandomizedSearchCV(gbm,param_distributions=param_dist,n_iter=10,scoring="f1_macro")
+            random_search_gbm.fit(self.X_train_init, self.Y_train_init)
+            pred_submit = random_search_gbm.predict(self.X_test_submit)
             self.to_submit_file('gbm', pred_submit)
 
     def SVM(self, save):
         if save==False:
+            param_dist = {"C":[0.001, 0.01, 0.1, 1, 10, 100],
+                          'kernel': ['linear','poly','rbf'],
+                          'gamma':['scale',0.001, 0.01, 0.1, 1, 10, 100]}
             svm = SVC()
+            random_search_svm = RandomizedSearchCV(svc,param_distributions=param_dist,n_iter=10,scoring="f1_macro")
             ts = time.time()
-            svm.fit(self.X_train, self.y_train)
+            random_search_svm.fit(self.X_train, self.y_train)
             te = time.time()
-            pred = svm.predict(self.X_test)
+            pred = random_search_svm.predict(self.X_test)
             self.score_track = self.score_track.append({'name': 'Support Vector Machine',
                                                         'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
                                                         'accuracy': round(accuracy_score(self.y_test, pred), 3),
                                                         'time': round(te - ts)}, ignore_index=True)
         else:
-            svm=SVC()
-            svm.fit(self.X_train_init, self.Y_train_init)
-            pred_submit = svm.predict(self.X_test_submit)
+            param_dist = {"C":[0.001, 0.01, 0.1, 1, 10, 100],
+                          'kernel': ['linear','poly','rbf'],
+                          'gamma':['scale',0.001, 0.01, 0.1, 1, 10, 100]}
+            svm = SVC()
+            random_search_svm = RandomizedSearchCV(svc,param_distributions=param_dist,n_iter=10,scoring="f1_macro")
+            random_search_svm.fit(self.X_train_init, self.Y_train_init)
+            pred_submit = random_search_svm.predict(self.X_test_submit)
             self.to_submit_file('svm', pred_submit)
 
     def to_submit_file(self, method, pred_submit):
-        self.test_df["Category"] = pred_submit
-        self.test_df['Id'] = self.test_df.index
-        submit_file = self.test_df[['Id', 'Category']]
+        test_df_copy=self.test_df.copy()
+        test_df_copy["Category"]=pred_submit
+        submit_file=test_df_copy[["Id","Category"]]
         submit_file.to_csv(os.path.join(self.data_results_path, self.params_we + method + '.csv'), index=False)
 
     def method_save(self, method='all', save=False):
