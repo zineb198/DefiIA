@@ -11,12 +11,18 @@ DATA_PATH = '/home/cecile/data/'  # PATH si utilisation de l'instance (attention
 DATA_MODELS_PATH = '/home/cecile/models/'  # PATH si utilisation de l'instance (attention il faut commenter les os.makedirs...)
 DATA_RESULTS_PATH = '/home/cecile/results/'  # PATH si utilisation de l'instance (attention il faut commenter les os.makedirs...)
 DATA_CLEANED_PATH=os.path.join(DATA_PATH, 'cleaned')
-
+DATA_PATH_TFIDF=os.path.join(DATA_MODELS_PATH, 'tf-idf')
 
 #if not os.path.exists(DATA_MODELS_PATH): # Si utilisation de l'instance, il faut commenter les os.makedirs...
 #    os.makedirs(DATA_MODELS_PATH)
+
+#if not os.path.exists(os.path.join(DATA_MODELS_PATH, 'word2vec')):
 #    os.makedirs(os.path.join(DATA_MODELS_PATH, 'word2vec'))
 #    os.makedirs(os.path.join(DATA_MODELS_PATH, 'fasttext'))
+   
+#if not os.path.exists(os.path.join(DATA_MODELS_PATH, 'tf-idf')):
+#    os.makedirs(os.path.join(DATA_MODELS_PATH, 'tf-idf'))
+    
     
 #if not os.path.exists(DATA_RESULTS_PATH):
 #    os.makedirs(DATA_RESULTS_PATH)
@@ -24,11 +30,11 @@ DATA_CLEANED_PATH=os.path.join(DATA_PATH, 'cleaned')
 # Reading files
 params_cl = '_stem'  # TODO : '_stem' if stemming=True or '_lem' if lemmatizer in cleaning
 
+arg_gender=False # TODO True if add gender to models, else False
+embedding = True #TODO True if embedding, else if TF-IDF
+
 train_df = pd.read_csv(os.path.join(DATA_CLEANED_PATH, 'train_cleaned' + params_cl + '.csv'), index_col=0)
 test_df = pd.read_csv(os.path.join(DATA_CLEANED_PATH, 'test_cleaned' + params_cl + '.csv'), index_col=0)
-
-arg_gender=False # TODO
-embedding = True #TODO
 
 if embedding:
     # Reading files for each word embedding combination of parameters
@@ -53,8 +59,8 @@ if embedding:
             cf.method_save(save=True)
 
 else :
-    X_train = pickle.load(open(os.path.join(DATA_tf_PATH,'X_train.pickle'), "rb"))
-    X_test_submit = pickle.load(open(os.path.join(DATA_tf_PATH,'X_test.pickle'), "rb"))
+    X_train = pickle.load(open(os.path.join(DATA_PATH_TFIDF,'X_train.pickle'), "rb"))
+    X_test_submit = pickle.load(open(os.path.join(DATA_PATH_TFIDF,'X_test.pickle'), "rb"))
     Y_train = pd.read_csv(DATA_PATH + 'train_label.csv', index_col=0)
     Y_train = Y_train['Category']
 

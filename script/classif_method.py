@@ -132,7 +132,7 @@ class classif_method:
             param_dist ={"max_features":["sqrt","log2"],"n_estimators":list(range(100,500,1000)),
                          "max_depth":list(range(4,10))+[None]}
             random_search_rf = RandomizedSearchCV(forest,param_distributions=param_dist,
-                                                  n_iter=20,scoring="f1_macro")
+                                                  n_iter=10,scoring="f1_macro")
             ts = time.time()
             random_search_rf.fit(self.X_train, self.y_train)
             te = time.time()
@@ -178,7 +178,7 @@ class classif_method:
                           'kernel': ['linear','poly','rbf'],
                           'gamma':['scale',0.001, 0.01, 0.1, 1, 10, 100]}
             svm = SVC()
-            random_search_svm = RandomizedSearchCV(svc,param_distributions=param_dist,n_iter=10,scoring="f1_macro")
+            random_search_svm = RandomizedSearchCV(svm,param_distributions=param_dist,n_iter=10,scoring="f1_macro")
             ts = time.time()
             random_search_svm.fit(self.X_train, self.y_train)
             te = time.time()
@@ -192,7 +192,7 @@ class classif_method:
                           'kernel': ['linear','poly','rbf'],
                           'gamma':['scale',0.001, 0.01, 0.1, 1, 10, 100]}
             svm = SVC()
-            random_search_svm = RandomizedSearchCV(svc,param_distributions=param_dist,n_iter=10,scoring="f1_macro")
+            random_search_svm = RandomizedSearchCV(svm,param_distributions=param_dist,n_iter=10,scoring="f1_macro")
             random_search_svm.fit(self.X_train_init, self.Y_train_init)
             pred_submit = random_search_svm.predict(self.X_test_submit)
             self.to_submit_file('svm', pred_submit)
@@ -202,7 +202,10 @@ class classif_method:
         test_df_copy["Category"]=pred_submit
         test_df_copy["Id"] = test_df_copy.index
         submit_file=test_df_copy[["Id","Category"]]
-        submit_file.to_csv(os.path.join(self.data_results_path, self.params_we + method + '.csv'), index=False)
+        if gender==False :
+            submit_file.to_csv(os.path.join(self.data_results_path, self.params_we + method + '.csv'), index=False)
+        else :
+            submit_file.to_csv(os.path.join(self.data_results_path, self.params_we + method + '_gender.csv'), index=False)
 
     def method_save(self, method='all', save=False):
         if method == 'logit':

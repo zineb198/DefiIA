@@ -17,6 +17,8 @@ DATA_MODELS_PATH = '/Users/Morgane/Desktop/5GMM/DefiIA/models/' #'/Users/cecile/
 #DATA_MODELS_PATH = '/home/cecile/models'  # PATH si utilisation de l'instance (attention il faut commenter les os.makedirs...)
 if not os.path.exists(DATA_MODELS_PATH):
     os.makedirs(DATA_MODELS_PATH)
+    
+if not os.path.exists(os.path.join(DATA_MODELS_PATH, 'word2vec')):
     os.makedirs(os.path.join(DATA_MODELS_PATH, 'word2vec'))
     os.makedirs(os.path.join(DATA_MODELS_PATH, 'fasttext'))
 
