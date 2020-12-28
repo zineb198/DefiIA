@@ -200,6 +200,7 @@ class classif_method:
     def to_submit_file(self, method, pred_submit):
         test_df_copy=self.test_df.copy()
         test_df_copy["Category"]=pred_submit
+        test_df_copy["Id"] = test_df_copy.index
         submit_file=test_df_copy[["Id","Category"]]
         submit_file.to_csv(os.path.join(self.data_results_path, self.params_we + method + '.csv'), index=False)
 

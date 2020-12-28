@@ -28,25 +28,36 @@ train_df = pd.read_csv(os.path.join(DATA_CLEANED_PATH, 'train_cleaned' + params_
 test_df = pd.read_csv(os.path.join(DATA_CLEANED_PATH, 'test_cleaned' + params_cl + '.csv'), index_col=0)
 
 arg_gender=False # TODO
+embedding = True #TODO
 
-# Reading files for each word embedding combination of parameters
-for sg in [0, 1]:
-    for iter in [10]:
-        type_we = 'word2vec'
-        params_we = dict(sentences=None, iter=iter, sg=sg, size=300, min_count=1, window=5, hs=0, negative=10)
+if embedding:
+    # Reading files for each word embedding combination of parameters
+    for sg in [0, 1]:
+        for iter in [10]:
+            type_we = 'word2vec'
+            params_we = dict(sentences=None, iter=iter, sg=sg, size=300, min_count=1, window=5, hs=0, negative=10)
 
-        we = WordEmbedding(word_embedding_type=type_we, args=params_we,
-                           DATA_MODELS_PATH=DATA_MODELS_PATH, array_token=None,
-                           test_array_token=None)
-        name_we = we.get_str()
-        print(name_we)
+            we = WordEmbedding(word_embedding_type=type_we, args=params_we,
+                               DATA_MODELS_PATH=DATA_MODELS_PATH, array_token=None,
+                               test_array_token=None)
+            name_we = we.get_str()
+            print(name_we)
 
-        X_train = pickle.load(open(os.path.join(DATA_MODELS_PATH, type_we, 'X_train_' + name_we + '.pkl'), "rb"))
-        X_test_submit = pickle.load(open(os.path.join(DATA_MODELS_PATH, type_we, 'X_test_' + name_we + '.pkl'), "rb"))
-        Y_train = pd.read_csv(DATA_PATH + 'train_label.csv', index_col=0)
-        Y_train = Y_train['Category']
-        
-# Apply classification method
-        cf = classif_method(X_train, X_test_submit, Y_train, train_df, test_df, DATA_RESULTS_PATH, name_we,arg_gender)
-        cf.method_save(save=True)
+            X_train = pickle.load(open(os.path.join(DATA_MODELS_PATH, type_we, 'X_train_' + name_we + '.pkl'), "rb"))
+            X_test_submit = pickle.load(open(os.path.join(DATA_MODELS_PATH, type_we, 'X_test_' + name_we + '.pkl'), "rb"))
+            Y_train = pd.read_csv(DATA_PATH + 'train_label.csv', index_col=0)
+            Y_train = Y_train['Category']
 
+    # Apply classification method
+            cf = classif_method(X_train, X_test_submit, Y_train, train_df, test_df, DATA_RESULTS_PATH, name_we,arg_gender)
+            cf.method_save(save=True)
+
+else :
+    X_train = pickle.load(open(os.path.join(DATA_tf_PATH,'X_train.pickle'), "rb"))
+    X_test_submit = pickle.load(open(os.path.join(DATA_tf_PATH,'X_test.pickle'), "rb"))
+    Y_train = pd.read_csv(DATA_PATH + 'train_label.csv', index_col=0)
+    Y_train = Y_train['Category']
+
+    # Apply classification method
+    cf = classif_method(X_train, X_test_submit, Y_train, train_df, test_df, DATA_RESULTS_PATH,'tf-idf_', arg_gender)
+    cf.method_save(save=True)
