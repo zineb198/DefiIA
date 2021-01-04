@@ -68,7 +68,15 @@ class ProjectManager:
                           src_folder=self.local_code,
                           dst_folder=self.remote_code,
                           recurse=False,
-                          python_filter=True)
+                          python_filter=True,
+                          txt_filter=False)
+
+        self.instance.scp(direction='up',
+                          src_folder=self.local_code,
+                          dst_folder=self.remote_code,
+                          recurse=False,
+                          python_filter=False,
+                          txt_filter=True)
 
     def execute_code_ssh(self, command):
         """
@@ -96,7 +104,7 @@ class ProjectManager:
         :return:
         """
 
-        command = "'python " + self.remote_code + "/" + script_name #/opt/conda/bin/
+        command = "'python3 " + self.remote_code + "/" + script_name  #/opt/conda/bin/
 
                   #+ " --data_dir " \
                   #+ self.remote_data + " --results_dir " + self.remote_results + " --model_dir " + self.remote_model

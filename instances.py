@@ -124,7 +124,8 @@ class InstancesManager:
 
         self.command_application(command)
 
-    def scp(self, direction, src_folder, dst_folder, recurse=True, python_filter=True, pickle_filter=False, csv_filter=False):
+    def scp(self, direction, src_folder, dst_folder, recurse=True, python_filter=True, pickle_filter=False,
+            csv_filter=False, txt_filter=False):
         """
 
         :param direction:
@@ -159,6 +160,9 @@ class InstancesManager:
 
         if csv_filter:
             command = command + '/*.csv'
+
+        if txt_filter:
+            command = command + '/*.txt'
 
         # Adding destination folder
         command = command + ' ' + dst_folder
