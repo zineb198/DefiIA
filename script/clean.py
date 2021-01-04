@@ -13,6 +13,7 @@ class CleanText:
     def __init__(self, stemming=True, lem=False):
 
         english_stopwords = nltk.corpus.stopwords.words('english')
+        english_stopwords.append('also')
         self.stopwords = [self.remove_accent(sw) for sw in english_stopwords]
 
         # Args
