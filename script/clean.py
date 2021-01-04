@@ -41,7 +41,7 @@ class CleanText:
         :param txt: text (str)
         :return: only text (str) with alphabet letters
         '''
-        regex_mail='\S+@\S+'
+        regex_mail = '\S+@\S+'
         regex_url = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
         aux1 = re.sub(regex_url, ' ', txt)
         aux2 = re.sub(regex_mail, ' ', aux1)

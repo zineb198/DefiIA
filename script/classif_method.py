@@ -9,7 +9,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 from sklearn.svm import SVC
-
 from scipy.sparse import csr_matrix
 from scipy.sparse import hstack
 import numpy as np
@@ -23,7 +22,6 @@ from tqdm import tqdm
 
 import tensorflow.keras.models as km
 import tensorflow.keras.layers as kl
-
 import logging
 logging.getLogger('tensorflow').disabled = True
 
@@ -47,9 +45,9 @@ class classif_method:
             self.X_train_init=X_train
             self.X_test_submit = X_test_submit
             self.Y_train_init = Y_train
-        else :
+        else:
             if type(X_train)==csr_matrix: #case TF-IDF
-                gender_train=csr_matrix(pd.get_dummies(train_df[['gender']]))
+                gender_train = csr_matrix(pd.get_dummies(train_df[['gender']]))
                 self.X_train_init=hstack((X_train, gender_train))
                 gender_test=csr_matrix(pd.get_dummies(test_df[['gender']]))
                 self.X_test_submit =hstack((X_test_submit, gender_test))
@@ -61,7 +59,7 @@ class classif_method:
                 gender_test=pd.get_dummies(test_df[['gender']]).values
                 self.X_test_submit =np.hstack((X_test_submit, gender_test))
                 self.Y_train_init = Y_train
-            else : 
+            else:
                 print('Type error X_train')
                 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X_train_init,

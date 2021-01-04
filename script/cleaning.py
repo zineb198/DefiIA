@@ -1,7 +1,6 @@
 import pandas as pd
 from clean import CleanText
 import os
-import nltk
 
 
 # Define PATH files

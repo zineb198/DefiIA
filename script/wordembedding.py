@@ -6,6 +6,7 @@ import pickle
 import os
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
+
 class WordEmbedding:
 
     def __init__(self, word_embedding_type, args, DATA_MODELS_PATH, array_token, test_array_token):
@@ -24,7 +25,6 @@ class WordEmbedding:
         te = time.time()
         return model, te - ts
 
-    #ça sert à quoi ça ???
     @staticmethod
     def get_features_mean(lines, model):
         features = [model[x] for x in lines if x in model]
@@ -42,7 +42,6 @@ class WordEmbedding:
         te = time.time()
         return X_embedded, te - ts
 
-    #rajout de maxime car besoin pour le RNN
     @staticmethod
     def tokens_to_embedding_sequences(X, model):
         all_sequences_length = [len(x) for x in X]
@@ -56,14 +55,6 @@ class WordEmbedding:
         X_embedded_pad = pad_sequences(array_embedding_sequences, value=0, maxlen=Ns, padding='pre')
         return X_embedded_pad
 
-    def get_hash(self): #surement a supprimer
-        params = self.args.copy()
-        del params['sentences']
-        str_hash = ''
-        for cle, valeur in params.items():
-            str_hash += cle + '_' + str(valeur) + '_'
-        return hashlib.md5(str_hash.encode()).hexdigest()
-
     def get_str(self):
         params = self.args.copy()
         del params['sentences']
@@ -71,7 +62,6 @@ class WordEmbedding:
         for cle, valeur in params.items():
             str_params += cle + '_' + str(valeur) + '_'
         return str_params
-
 
     def model_save(self, model, time):
         print("Model ", self.word_embedding_type, " trained in %.2f minutes" % (time / 60), "\n")
@@ -83,7 +73,6 @@ class WordEmbedding:
         pickle.dump(X, open(os.path.join(self.data_models_path, file+'_'+num_hash+'.pkl'), 'wb'))
 
     def train_save(self, RNN=False):
-
         print('### Training model ###')
         print(self.get_str())
         model, time = self.train()
@@ -96,7 +85,7 @@ class WordEmbedding:
             X_test = self.tokens_to_embedding_sequences(self.array_token, model)
             self.features_save(X_test, 'X_test_RNN')
 
-        else :
+        else:
             print('\n \n### Get features embedded ###')
             X_train, time = self.get_matrix_features_means(self.array_token, model)
             self.features_save(X_train, 'X_train')

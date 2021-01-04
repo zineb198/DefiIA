@@ -40,17 +40,16 @@ test_df = pd.read_csv(os.path.join(DATA_CLEANED_PATH, 'test_cleaned' + params_cl
 if embedding:
     # Reading files for each word embedding combination of parameters
 
-    #POURQUOI ON REFAIT CETTE ETAPE SACHANT QU'ON A DEJA FAIT l'EMBEDDING ???
-    #for sg in [0, 1]:
-     #   for iter in [10]:
-      #      type_we = 'word2vec'
-       #     params_we = dict(sentences=None, iter=iter, sg=sg, size=300, min_count=1, window=5, hs=0, negative=10)
+    for sg in [0, 1]:
+        for iter in [10]:
+            type_we = 'word2vec'
+            params_we = dict(sentences=None, iter=iter, sg=sg, size=300, min_count=1, window=5, hs=0, negative=10)
 
-        #    we = WordEmbedding(word_embedding_type=type_we, args=params_we,
-        #                       DATA_MODELS_PATH=DATA_MODELS_PATH, array_token=None,
-         #                      test_array_token=None)
-         #   name_we = we.get_str()
-          #  print(name_we)
+            we = WordEmbedding(word_embedding_type=type_we, args=params_we,
+                               DATA_MODELS_PATH=DATA_MODELS_PATH, array_token=None,
+                               test_array_token=None)
+            name_we = we.get_str()
+            print(name_we)
     if RNN:
         X_train = pickle.load(open(os.path.join(DATA_MODELS_PATH, type_we, 'X_train_RNN_' + name_we + '.pkl'), "rb"))
         X_test_submit = pickle.load(open(os.path.join(DATA_MODELS_PATH, type_we, 'X_test_RNN_' + name_we + '.pkl'), "rb"))

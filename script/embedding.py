@@ -38,7 +38,7 @@ test_array_token = [line.split(" ") for line in test_df["description_cleaned"].v
 #TODO : modify the saving format according to the classification RNN or not
 RNN = False
 # Define params models
-for sg in [0]:
+for sg in [0,1]:
     for iter in [10]:
         params_word2vec = dict(sentences=train_array_token, iter=iter, sg=sg, size=300, min_count=1, window=5, hs=0,
                                negative=10)
