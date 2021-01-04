@@ -32,18 +32,19 @@ test_df = pd.read_csv(os.path.join(DATA_CLEANED_PATH, 'test_cleaned' + params_cl
 train_label = pd.read_csv(os.path.join(DATA_PATH, 'train_label.csv'), index_col=0)
 
 
-array_token = [line.split(" ") for line in train_df["description_cleaned"].values]
+train_array_token = [line.split(" ") for line in train_df["description_cleaned"].values]
 test_array_token = [line.split(" ") for line in test_df["description_cleaned"].values]
 
-
+#TODO : modify the saving format according to the classification RNN or not
+RNN = False
 # Define params models
 for sg in [0]:
     for iter in [10]:
-        params_word2vec = dict(sentences=array_token, iter=iter, sg=sg, size=300, min_count=1, window=5, hs=0,
+        params_word2vec = dict(sentences=train_array_token, iter=iter, sg=sg, size=300, min_count=1, window=5, hs=0,
                                negative=10)
 
     # Training & save model
         we = WordEmbedding(word_embedding_type='word2vec', args=params_word2vec,
-                           DATA_MODELS_PATH=DATA_MODELS_PATH, array_token=array_token,
+                           DATA_MODELS_PATH=DATA_MODELS_PATH, array_token=train_array_token,
                            test_array_token=test_array_token)
-        we.train_save()
+        we.train_save(RNN)

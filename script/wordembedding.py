@@ -4,7 +4,7 @@ import numpy as np
 import hashlib
 import pickle
 import os
-
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 class WordEmbedding:
 
@@ -24,6 +24,7 @@ class WordEmbedding:
         te = time.time()
         return model, te - ts
 
+    #ça sert à quoi ça ???
     @staticmethod
     def get_features_mean(lines, model):
         features = [model[x] for x in lines if x in model]
@@ -41,7 +42,21 @@ class WordEmbedding:
         te = time.time()
         return X_embedded, te - ts
 
-    def get_hash(self): # surement a supprimer
+    #rajout de maxime car besoin pour le RNN
+    @staticmethod
+    def tokens_to_embedding_sequences(X, model):
+        all_sequences_length = [len(x) for x in X]
+        Ns = np.max(all_sequences_length)
+        array_embedding_sequences = []
+        for tokens in tqdm(X):
+            embedding_sequence = []
+            for token in tokens[:Ns]:
+                embedding_sequence.append(model[token])
+            array_embedding_sequences.append(embedding_sequence)
+        X_embedded_pad = pad_sequences(array_embedding_sequences, value=0, maxlen=Ns, padding='pre')
+        return X_embedded_pad
+
+    def get_hash(self): #surement a supprimer
         params = self.args.copy()
         del params['sentences']
         str_hash = ''
@@ -57,6 +72,7 @@ class WordEmbedding:
             str_params += cle + '_' + str(valeur) + '_'
         return str_params
 
+
     def model_save(self, model, time):
         print("Model ", self.word_embedding_type, " trained in %.2f minutes" % (time / 60), "\n")
         num_hash = self.get_str()
@@ -66,14 +82,23 @@ class WordEmbedding:
         num_hash = self.get_str()
         pickle.dump(X, open(os.path.join(self.data_models_path, file+'_'+num_hash+'.pkl'), 'wb'))
 
-    def train_save(self):
+    def train_save(self, RNN=False):
+
         print('### Training model ###')
         print(self.get_str())
         model, time = self.train()
         self.model_save(model, time)
 
-        print('\n \n### Get features ###')
-        X_train, time = self.get_matrix_features_means(self.array_token, model)
-        self.features_save(X_train, 'X_train')
-        X_test, time = self.get_matrix_features_means(self.test_array_token, model)
-        self.features_save(X_test, 'X_test')
+        if RNN:
+            print('\n \n### Get features embedded padded for RNN with Keras ###')
+            X_train = self.tokens_to_embedding_sequences(self.array_token, model)
+            self.features_save(X_train, 'X_train_RNN')
+            X_test = self.tokens_to_embedding_sequences(self.array_token, model)
+            self.features_save(X_test, 'X_test_RNN')
+
+        else :
+            print('\n \n### Get features embedded ###')
+            X_train, time = self.get_matrix_features_means(self.array_token, model)
+            self.features_save(X_train, 'X_train')
+            X_test, time = self.get_matrix_features_means(self.test_array_token, model)
+            self.features_save(X_test, 'X_test')

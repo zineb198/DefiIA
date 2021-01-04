@@ -16,6 +16,24 @@ import numpy as np
 import os
 
 
+import collections
+import pickle
+import functools
+from tqdm import tqdm
+
+import tensorflow.keras.models as km
+import tensorflow.keras.layers as kl
+
+import logging
+logging.getLogger('tensorflow').disabled = True
+
+from tqdm import tqdm
+import sklearn.model_selection as sms
+#from solution.clean import CleanText
+import gensim
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+
 class classif_method:
     '''
     This class applies different classification methods to X and Y data and adds metrics to a dataframe score_track
@@ -197,6 +215,30 @@ class classif_method:
             pred_submit = random_search_svm.predict(self.X_test_submit)
             self.to_submit_file('svm', pred_submit)
 
+    def RNN(self, save, epochs=10, batch_size=256):
+        model = km.Sequential()
+        model.add(kl.LSTM(units=256, activation="relu", input_shape=(None, 300)))
+        model.add(kl.Dense(256))
+        model.add(kl.Activation("relu"))
+        model.add(kl.Dense(28))
+        model.add(kl.Activation("softmax"))
+        history = model.compile(loss="sparse_categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
+
+        if save == False :
+            model.fit(self.X_train, self.y_train, epochs=epochs, batch_size=batch_size, verbose=1)
+            predictions = model.predict(self.X_test)
+            pred = np.array([np.max(predictions[x,:]) for x in range(predictions.shape[0]) ]) #on est obligé car on a 28 proba et on en veut une seule
+            self.score_track = self.score_track.append({'name': 'RNN',
+                                                        'f1score': round(f1_score(self.y_test, pred, average='macro'),
+                                                                         3),
+                                                        'accuracy': round(accuracy_score(self.y_test, pred), 3),
+                                                        'time': round(te - ts)}, ignore_index=True)
+        else :
+            model.fit(self.X_train_init, self.Y_train_init, epochs=epochs, batch_size=batch_size, verbose=1)
+            predictions = model.predict(self.X_test_submit)
+            pred_submit = np.array([np.max(predictions[x,:]) for x in range(predictions.shape[0]) ]) #on est obligé car on a 28 proba et on en veut une seule
+            self.to_submit_file('RNN', pred_submit)
+
     def to_submit_file(self, method, pred_submit):
         test_df_copy=self.test_df.copy()
         test_df_copy["Category"]=pred_submit
@@ -222,7 +264,8 @@ class classif_method:
             self.Gradientboosting(save)
         elif method == 'svm':
             self.SVM(save)
-
+        elif method == 'RNN':
+            self.RNN(save)
         elif method == 'all':
             print('### logit ###')
             self.logit(save)
