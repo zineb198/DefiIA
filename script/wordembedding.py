@@ -52,7 +52,7 @@ class WordEmbedding:
             for token in tokens[:Ns]:
                 embedding_sequence.append(model[token])
             array_embedding_sequences.append(embedding_sequence)
-        X_embedded_pad = pad_sequences(array_embedding_sequences, value=0, maxlen=Ns, padding='pre')
+        X_embedded_pad = pad_sequences(array_embedding_sequences, value=0, maxlen=Ns, padding='pre', dtype=float)
         return X_embedded_pad
 
     def get_str(self):

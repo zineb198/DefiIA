@@ -59,7 +59,7 @@ if embedding:
         # Apply classification method
         cf = classif_method(X_train, X_test_submit, Y_train, train_df, test_df, DATA_RESULTS_PATH, name_we,arg_gender)
         cf.method_save(method='RNN', save=True)
-    else :
+    else:
         X_train = pickle.load(open(os.path.join(DATA_MODELS_PATH, type_we, 'X_train_' + name_we + '.pkl'), "rb"))
         X_test_submit = pickle.load(open(os.path.join(DATA_MODELS_PATH, type_we, 'X_test_' + name_we + '.pkl'), "rb"))
         Y_train = pd.read_csv(DATA_PATH + 'train_label.csv', index_col=0)
@@ -69,7 +69,7 @@ if embedding:
         cf = classif_method(X_train, X_test_submit, Y_train, train_df, test_df, DATA_RESULTS_PATH, name_we,arg_gender)
         cf.method_save(save=True)
 
-else :
+else:
     X_train = pickle.load(open(os.path.join(DATA_PATH_TFIDF,'X_train.pickle'), "rb"))
     X_test_submit = pickle.load(open(os.path.join(DATA_PATH_TFIDF,'X_test.pickle'), "rb"))
     Y_train = pd.read_csv(DATA_PATH + 'train_label.csv', index_col=0)
