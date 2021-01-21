@@ -24,9 +24,9 @@ There are multiple ways to run the code :
 #### a. Training locally 
 First change the path in the three scripts (`cleaning.py`, `embedding.py`, `classification.py`). <br />
 From the command line, go into the script folder and run the following lines : <br />
-> python cleaning.py
-> python embedding.py
-> python classification.py
+> python cleaning.py <br />
+> python embedding.py <br />
+> python classification.py <br />
 From the code you can modify the parameters to change the embedding method for example. <br />
 
 
