@@ -43,7 +43,7 @@ Move the `requirements.txt` file in the `script` folder.
 From the command line run the following line :
 > python main.py
 
-In this architecture, you will find the models in the 'model' folder and the submission files in the 'result' folder. <br />
+In this architecture, you will find the models in the `model` folder and the submission files in the `result` folder. <br />
 
 
 ### 2. Transformers : Bert
