@@ -1,7 +1,8 @@
 # DefiIA
 
 This repository is the code used during the Kaggle Challenge : [IA and Ethics](https://www.kaggle.com/c/defi-ia-insa-toulouse/overview). The aim of this competition is to assign the correct job category to a job description.
-The data is therefore representative of what can be found on the English speaking part of the Internet, and thus contains a certain amount of bias. One of the goals of this competition is to design a solution that is both accurate as well as fair.
+The data is therefore representative of what can be found on the English speaking part of the Internet, and thus contains a certain amount of bias. One of the goals of this competition is to design a solution that is both accurate as well as fair. <br />
+You can find an exploratory analysis of the data in the `notebook` folder of this git. <br />
 
 ## Tutorial
 
@@ -40,7 +41,7 @@ In this architecture, you will find the models in the 'model' folder and the sub
 
 
 ### 2. Transformers : Bert
-Upload the 'bert.ipynb' notebook to colab. <br />
+Upload the 'bert.ipynb' in the `notebook` folder to colab. <br />
 Choose the GPU. <br />
 Install the packages and import the data. <br /> 
 Run the cells and download the submission file. <br />
