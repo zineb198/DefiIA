@@ -41,7 +41,7 @@ In this architecture, you will find the models in the 'model' folder and the sub
 
 
 ### 2. Transformers : Bert
-Upload the 'bert.ipynb' in the `notebook` folder to colab. <br />
+Upload the `bert.ipynb in the `notebook` folder to colab. <br />
 Choose the GPU. <br />
 Install the packages and import the data. <br /> 
 Run the cells and download the submission file. <br />
