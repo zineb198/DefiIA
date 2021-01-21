@@ -80,7 +80,7 @@ class WordEmbedding:
         self.model_save(model, time)
 
         if RNN:
-            print('\n \n### Get features embedded padded for RNN with Keras ###')
+            print('\n ### Get features embedded padded for RNN with Keras ###')
             X_train = self.tokens_to_embedding_sequences(self.array_token, model)
             self.features_save(X_train, 'X_train_RNN')
             X_test = self.tokens_to_embedding_sequences(self.array_token, model)
