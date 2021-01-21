@@ -4,8 +4,7 @@ import os
 
 
 # Define PATH files
-DATA_PATH = 'C:/Users/maxdo/OneDrive/Documents/INSA/5A/DefiIA'#'/Users/cecile/Documents/INSA/DefiIA/data/'    #TODO
-#DATA_PATH = '/home/cecile/data'  # PATH si utilisation de l'instance (attention il faut commenter les os.makedirs...)
+DATA_PATH = '/Users/cecile/Documents/INSA/DefiIA/data/'  # TODO
 DATA_CLEANED_PATH = os.path.join(DATA_PATH, 'cleaned')
 if not os.path.exists(DATA_CLEANED_PATH):
     os.makedirs(DATA_CLEANED_PATH)
@@ -25,12 +24,6 @@ train_label.set_index('Id', inplace=True)
 
 
 # Cleaning process and save
-ct = CleanText(stemming=True, lem=False)  # TODO
-#try:
+ct = CleanText(stemming=True, lem=False)  # TODO : instanciate the cleaning parameters
 ct.clean_save(train_df, 'train', "description", "description_cleaned", DATA_CLEANED_PATH)
 ct.clean_save(test_df, 'test', "description", "description_cleaned", DATA_CLEANED_PATH)
-#except:
-#    nltk.download('stopwords')
-#    nltk.download('wordnet')
-#    ct.clean_save(train_df, 'train', "description", "description_cleaned", DATA_CLEANED_PATH)
-#    ct.clean_save(test_df, 'test', "description", "description_cleaned", DATA_CLEANED_PATH)
