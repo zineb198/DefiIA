@@ -4,6 +4,7 @@ import numpy as np
 import hashlib
 import pickle
 import os
+from tqdm import tqdm
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 
