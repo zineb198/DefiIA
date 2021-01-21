@@ -14,7 +14,12 @@ For the first one, you can either train locally or on the google cloud computing
 ### 1. Classical NLP methods
 
 ##### Installing environement dependencies
-> pip install -r requirements.txt
+Run the following lines in your terminal : 
+> pip install -r requirements.txt <br />
+> python
+> import nltk
+> nltk.download('wordnet') <br />
+> nltk.download('stopwords') <br />
 
 ##### Load data
 > Download from the [link](https://www.kaggle.com/c/defi-ia-insa-toulouse/data) the data.
@@ -32,8 +37,9 @@ From the code you can modify the parameters to change the embedding method for e
 
 
 #### b. Training on google cloud platform
-In the 'instance.py' file, modify the parameters for your virtual machine. <br />
+In the `instance.py` file, modify the parameters for your virtual machine. <br />
 Change the path in the four scripts (`project.py`, `cleaning.py`, `embedding.py`, `classification.py`). <br />
+Move the `requirements.txt` file in the `script` folder.
 From the command line run the following line :
 > python main.py
 
