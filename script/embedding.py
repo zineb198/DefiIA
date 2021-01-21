@@ -31,6 +31,7 @@ test_array_token = [line.split(" ") for line in test_df["description_cleaned"].v
 
 RNN = False  # TODO : modify the saving format according to the classification RNN or not
 
+
 # Define params models
 for sg in [0, 1]:
     for iter in [10]:
