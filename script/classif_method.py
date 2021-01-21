@@ -13,23 +13,10 @@ from scipy.sparse import csr_matrix
 from scipy.sparse import hstack
 import numpy as np
 import os
-
-
-import collections
-import pickle
-import functools
-from tqdm import tqdm
-
 import tensorflow.keras.models as km
 import tensorflow.keras.layers as kl
 import logging
 logging.getLogger('tensorflow').disabled = True
-
-from tqdm import tqdm
-import sklearn.model_selection as sms
-#from solution.clean import CleanText
-import gensim
-from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 
 class classif_method:
@@ -40,41 +27,40 @@ class classif_method:
     gender = Boolean, if True add columns genders to predict
     '''
 
-    def __init__(self, X_train, X_test_submit, Y_train, train_df, test_df, DATA_RESULTS_PATH, params_we_str,gender):
-        if gender==False :
-            self.X_train_init=X_train
+    def __init__(self, X_train, X_test_submit, Y_train, train_df, test_df, DATA_RESULTS_PATH, params_we_str, gender):
+        self.gender = gender
+        if self.gender==False :
+            self.X_train_init = X_train
             self.X_test_submit = X_test_submit
             self.Y_train_init = Y_train
         else:
-            if type(X_train)==csr_matrix: #case TF-IDF
+            if type(X_train) == csr_matrix:  # case TF-IDF
                 gender_train = csr_matrix(pd.get_dummies(train_df[['gender']]))
-                self.X_train_init=hstack((X_train, gender_train))
-                gender_test=csr_matrix(pd.get_dummies(test_df[['gender']]))
-                self.X_test_submit =hstack((X_test_submit, gender_test))
+                self.X_train_init = hstack((X_train, gender_train))
+                gender_test = csr_matrix(pd.get_dummies(test_df[['gender']]))
+                self.X_test_submit = hstack((X_test_submit, gender_test))
                 self.Y_train_init = Y_train
 
-            elif type(X_train)==np.ndarray: #case embedding
-                gender_train=pd.get_dummies(train_df[['gender']]).values
-                self.X_train_init=np.hstack((X_train, gender_train))
-                gender_test=pd.get_dummies(test_df[['gender']]).values
-                self.X_test_submit =np.hstack((X_test_submit, gender_test))
+            elif type(X_train) == np.ndarray:  # case embedding
+                gender_train = pd.get_dummies(train_df[['gender']]).values
+                self.X_train_init = np.hstack((X_train, gender_train))
+                gender_test = pd.get_dummies(test_df[['gender']]).values
+                self.X_test_submit = np.hstack((X_test_submit, gender_test))
                 self.Y_train_init = Y_train
             else:
                 print('Type error X_train')
                 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X_train_init,
-                                                                                    self.Y_train_init,test_size=0.33,
-                                                                                    random_state=2020)
+                                                                                self.Y_train_init,test_size=0.33,
+                                                                                random_state=2020)
         self.test_df = test_df 
         self.data_results_path = DATA_RESULTS_PATH
         self.params_we = params_we_str
         self.score_track = pd.DataFrame(columns=['name', 'f1score', 'accuracy', 'time'])
 
-        
-
     def logit(self, save):
-        if save==False :
-            lr = LogisticRegression(max_iter=10000)
+        if save == False :
+            lr = LogisticRegression(max_iter=1000)
             ts = time.time()
             lr.fit(self.X_train, self.y_train)
             te = time.time()
@@ -84,13 +70,13 @@ class classif_method:
                                                         'accuracy': round(accuracy_score(self.y_test, pred), 2),
                                                         'time': round(te - ts)}, ignore_index=True)
         else:
-            lr = LogisticRegression(max_iter=10000)
+            lr = LogisticRegression(max_iter=1000)
             lr.fit(self.X_train_init, self.Y_train_init)
             pred_submit = lr.predict(self.X_test_submit)
             self.to_submit_file('logit', pred_submit)
 
     def logit_lasso(self, save):
-        if save==False :
+        if save == False :
             logit_lasso = LogisticRegression(penalty='l1', solver='liblinear')
             ts = time.time()
             logit_lasso.fit(self.X_train, self.y_train)
@@ -100,7 +86,7 @@ class classif_method:
                                                         'f1score': round(f1_score(self.y_test, pred, average='macro'), 3),
                                                         'accuracy': round(accuracy_score(self.y_test, pred), 3),
                                                         'time': round(te - ts)}, ignore_index=True)
-        else :
+        else:
             logit_lasso = LogisticRegression(penalty='l1', solver='liblinear')
             logit_lasso.fit(self.X_train_init, self.Y_train_init)
             pred_submit = logit_lasso.predict(self.X_test_submit)
@@ -124,9 +110,9 @@ class classif_method:
             self.to_submit_file('logit_ridge', pred_submit)
 
     def tree(self, save):
-        if save==False:
+        if save == False:
             tree = DecisionTreeClassifier()
-            gridsearch_tree = GridSearchCV(tree,param_grid={"max_depth":list(range(4,10))+[None]},scoring="f1_macro")
+            gridsearch_tree = GridSearchCV(tree,param_grid={"max_depth" : list(range(4,10))+ [None]}, scoring="f1_macro")
             ts = time.time()
             gridsearch_tree.fit(self.X_train, self.y_train)
             te = time.time()
@@ -143,7 +129,7 @@ class classif_method:
             self.to_submit_file('tree', pred_submit)
 
     def forest(self, save):
-        if save==False:
+        if save == False:
             forest = RandomForestClassifier()
             param_dist ={"max_features":["sqrt","log2"],"n_estimators":list(range(100,500,1000)),
                          "max_depth":list(range(4,10))+[None]}
@@ -169,9 +155,9 @@ class classif_method:
 
     def Gradientboosting(self, save):
         if save==False:
-            param_dist = {'n_estimators': list(range(100,601,100)), 'learning_rate': [0.05,0.1,0.25,0.5,0.75,1]}
+            param_dist = {'n_estimators': list(range(100,601,100)), 'learning_rate': [0.05, 0.1, 0.25, 0.5, 0.75, 1]}
             gbm = GradientBoostingClassifier()
-            random_search_gbm = RandomizedSearchCV(gbm,param_distributions=param_dist,n_iter=10,scoring="f1_macro")
+            random_search_gbm = RandomizedSearchCV(gbm,param_distributions=param_dist, n_iter=10, scoring="f1_macro")
             ts = time.time()
             random_search_gbm.fit(self.X_train, self.y_train)
             te = time.time()
@@ -183,16 +169,16 @@ class classif_method:
         else:
             param_dist = {'n_estimators': list(range(100,601,100)), 'learning_rate': [0.05,0.1,0.25,0.5,0.75,1]}
             gbm = GradientBoostingClassifier()
-            random_search_gbm = RandomizedSearchCV(gbm,param_distributions=param_dist,n_iter=10,scoring="f1_macro")
+            random_search_gbm = RandomizedSearchCV(gbm, param_distributions=param_dist, n_iter=10, scoring="f1_macro")
             random_search_gbm.fit(self.X_train_init, self.Y_train_init)
             pred_submit = random_search_gbm.predict(self.X_test_submit)
             self.to_submit_file('gbm', pred_submit)
 
     def SVM(self, save):
-        if save==False:
+        if save == False:
             param_dist = {"C":[0.001, 0.01, 0.1, 1, 10, 100],
-                          'kernel': ['linear','poly','rbf'],
-                          'gamma':['scale',0.001, 0.01, 0.1, 1, 10, 100]}
+                          'kernel': ['linear', 'poly', 'rbf'],
+                          'gamma': ['scale', 0.001, 0.01, 0.1, 1, 10, 100]}
             svm = SVC()
             random_search_svm = RandomizedSearchCV(svm,param_distributions=param_dist,n_iter=10,scoring="f1_macro")
             ts = time.time()
@@ -205,7 +191,7 @@ class classif_method:
                                                         'time': round(te - ts)}, ignore_index=True)
         else:
             param_dist = {"C":[0.001, 0.01, 0.1, 1, 10, 100],
-                          'kernel': ['linear','poly','rbf'],
+                          'kernel': ['linear', 'poly', 'rbf'],
                           'gamma':['scale',0.001, 0.01, 0.1, 1, 10, 100]}
             svm = SVC()
             random_search_svm = RandomizedSearchCV(svm,param_distributions=param_dist,n_iter=10,scoring="f1_macro")
@@ -231,20 +217,20 @@ class classif_method:
                                                                          3),
                                                         'accuracy': round(accuracy_score(self.y_test, pred), 3),
                                                         'time': round(te - ts)}, ignore_index=True)
-        else :
+        else:
             model.fit(self.X_train_init, self.Y_train_init, epochs=epochs, batch_size=batch_size, verbose=1)
             predictions = model.predict(self.X_test_submit)
-            pred_submit = np.array([np.max(predictions[x,:]) for x in range(predictions.shape[0]) ]) #on est obligé car on a 28 proba et on en veut une seule
+            pred_submit = np.array([np.argmax(predictions[x,:]) for x in range(predictions.shape[0]) ]) #on est obligé car on a 28 proba et on en veut une seule
             self.to_submit_file('RNN', pred_submit)
 
     def to_submit_file(self, method, pred_submit):
         test_df_copy=self.test_df.copy()
-        test_df_copy["Category"]=pred_submit
+        test_df_copy["Category"] = pred_submit
         test_df_copy["Id"] = test_df_copy.index
-        submit_file=test_df_copy[["Id","Category"]]
-        if gender==False :
+        submit_file = test_df_copy[["Id","Category"]]
+        if self.gender==False :
             submit_file.to_csv(os.path.join(self.data_results_path, self.params_we + method + '.csv'), index=False)
-        else :
+        else:
             submit_file.to_csv(os.path.join(self.data_results_path, self.params_we + method + '_gender.csv'), index=False)
 
     def method_save(self, method='all', save=False):
@@ -267,18 +253,18 @@ class classif_method:
         elif method == 'all':
             print('### logit ###')
             self.logit(save)
-            #print('### logit lasso ###')
-            #self.logit_lasso(save)
-            #print('### logit ridge ###')
-            #self.logit_ridge(save)
             print('### tree ###')
             self.tree(save)
             print('### forest ###')
             self.forest(save)
-            #print('### GBM ###')
-            #self.Gradientboosting(save)
-            #print('### SVM ###')
-            #self.SVM(save)
+            print('### GBM ###')
+            self.Gradientboosting(save)
+            print('### SVM ###')
+            self.SVM(save)
+            #print('### logit lasso ###')
+            #self.logit_lasso(save)
+            #print('### logit ridge ###')
+            #self.logit_ridge(save)
             self.score_track.to_csv(os.path.join(self.data_results_path, self.params_we + '_all.csv'))
         else:
-            print('Try with method=logit or logit_lasso or logit_ridge or tree, etc')
+            print('Try with method=logit or tree or forest, etc')
