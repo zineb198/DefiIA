@@ -16,6 +16,8 @@ For the first one, you can either train locally or on the google cloud computing
 ##### Installing environement dependencies
 Run the following lines in your terminal : 
 > pip install -r requirements.txt <br />
+> python
+> import nltk
 > nltk.download('wordnet') <br />
 > nltk.download('stopwords') <br />
 
