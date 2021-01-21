@@ -10,41 +10,30 @@ projectManager = project.ProjectManager(execute_command=True)
 print("\n########## Start Instance ##########")
 projectManager.instance_init()
 
-
 # Update data
 print("\n########## Create directories ##########")
-#projectManager.execute_code_ssh("'mkdir " + projectManager.remote_folder + "'")
-#projectManager.execute_code_ssh("'mkdir " + projectManager.remote_data_cleaned + "'")
-#projectManager.execute_code_ssh("'mkdir " + projectManager.remote_results + "'")
-#projectManager.execute_code_ssh("'mkdir " + projectManager.remote_model + "'")
-#projectManager.execute_code_ssh("'mkdir " + projectManager.remote_model + '/word2vec' + "'")
-#projectManager.execute_code_ssh("'mkdir " + projectManager.remote_code + "'")
-# rajout dossier tfidf
-
+projectManager.execute_code_ssh("'mkdir script'")
 
 print("\n########## Send data and unzip it ##########")
-#projectManager.update_data("data.zip")
-
+projectManager.update_data("data.zip")
 
 # Update last version of code
 print("\n########## Send code ##########")
 projectManager.update_code()
 
 print("\n########## Install requirements ##########")
-projectManager.execute_code_ssh(" 'pip3 install -r script/requirements.txt' ")
+projectManager.execute_code_ssh(" 'pip install -r script/requirements.txt' ")
 
 # Execute Job
 print("\n########## Execute script ##########")
 projectManager.execute_python_script("cleaning.py")
-#projectManager.execute_python_script("embedding.py")
-#projectManager.execute_python_script("classification.py")
-
+projectManager.execute_python_script("embedding.py")
+projectManager.execute_python_script("classification.py")
 
 # Collect job output
 print("\n########## Get Result back ##########")
-#projectManager.collect_results()
-
+projectManager.collect_results()
 
 ## Finalize instance
 print("\n########## Stop Instance ##########")
-#projectManager.instance_end()
+projectManager.instance_end()

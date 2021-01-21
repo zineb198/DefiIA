@@ -10,7 +10,7 @@ class InstancesManager:
 
         # VM arguments
         self.zone = 'asia-east1-b' # TODO
-        self.instance_name = 'instance-mymaxou'  # TODO
+        self.instance_name = 'instance-ia'  # TODO
         self.ssh_key_file = '/Users/cecile/.ssh/google_compute_engine'  # TODO
 
         # Action arguments

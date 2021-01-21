@@ -104,7 +104,7 @@ class ProjectManager:
         :return:
         """
 
-        command = "'python3 " + self.remote_code + "/" + script_name  #/opt/conda/bin/
+        command = "'/opt/conda/bin/python " + self.remote_code + "/" + script_name  #/opt/conda/bin/
 
                   #+ " --data_dir " \
                   #+ self.remote_data + " --results_dir " + self.remote_results + " --model_dir " + self.remote_model
