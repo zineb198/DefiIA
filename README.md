@@ -37,7 +37,7 @@ From the code you can modify the parameters to change the embedding method for e
 
 
 #### b. Training on google cloud platform
-In the 'instance.py' file, modify the parameters for your virtual machine. <br />
+In the `instance.py` file, modify the parameters for your virtual machine. <br />
 Change the path in the four scripts (`project.py`, `cleaning.py`, `embedding.py`, `classification.py`). <br />
 From the command line run the following line :
 > python main.py
