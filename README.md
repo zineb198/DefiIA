@@ -15,9 +15,9 @@ For the first one, you can either train locally or on the google cloud computing
 
 ##### Installing environement dependencies
 Run the following lines in your terminal : 
-> pip install -r requirements.txt
-> nltk.download('wordnet')
-> nltk.download('stopwords')
+> pip install -r requirements.txt <br />
+> nltk.download('wordnet') <br />
+> nltk.download('stopwords') <br />
 
 ##### Load data
 > Download from the [link](https://www.kaggle.com/c/defi-ia-insa-toulouse/data) the data.
